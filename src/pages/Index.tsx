@@ -17,6 +17,7 @@ const Index = () => {
   const { toast } = useToast();
   const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' });
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const calculatePrice = () => {
     const { length, width, height } = dimensions;
@@ -72,13 +73,69 @@ const Index = () => {
               Контакты
             </a>
           </div>
-          <a
-            href="tel:+79937266600"
-            className="text-primary font-semibold hover:text-primary/80 transition-colors"
-          >
-            +7 993 726-66-00
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="tel:+79937266600"
+              className="hidden sm:block text-primary font-semibold hover:text-primary/80 transition-colors"
+            >
+              +7 993 726-66-00
+            </a>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden text-foreground hover:text-primary transition-colors"
+              aria-label="Toggle menu"
+            >
+              <Icon name={mobileMenuOpen ? "X" : "Menu"} size={24} />
+            </button>
+          </div>
         </div>
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-background/95 backdrop-blur-lg border-t border-border">
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
+              <a
+                href="#services"
+                className="hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Услуги
+              </a>
+              <a
+                href="#calculator"
+                className="hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Калькулятор
+              </a>
+              <a
+                href="#gallery"
+                className="hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Галерея
+              </a>
+              <a
+                href="#faq"
+                className="hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                FAQ
+              </a>
+              <a
+                href="#contact"
+                className="hover:text-primary transition-colors py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Контакты
+              </a>
+              <a
+                href="tel:+79937266600"
+                className="text-primary font-semibold hover:text-primary/80 transition-colors py-2 border-t border-border mt-2 pt-4"
+              >
+                +7 993 726-66-00
+              </a>
+            </div>
+          </div>
+        )}
       </nav>
 
       <section className="pt-32 pb-20 px-4 relative overflow-hidden">
@@ -106,16 +163,7 @@ const Index = () => {
                   </a>
                 </Button>
               </div>
-              <div className="flex gap-4 pt-4">
-                <a
-                  href="https://t.me/levo_del"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <Icon name="Send" size={24} />
-                </a>
-              </div>
+
             </div>
             <div className="relative animate-scale-in">
               <img

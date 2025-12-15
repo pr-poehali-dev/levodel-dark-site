@@ -54,8 +54,8 @@ const Index = () => {
     },
     {
       date: new Date(Date.now() - 172800000).toLocaleDateString('ru-RU'),
-      title: 'Крупноформатная печать',
-      description: 'Теперь печатаем изделия до 40x40x50 см на новом оборудовании',
+      title: 'Максимальный размер печати',
+      description: 'Печатаем изделия размером до 256×256×256 мм на профессиональном оборудовании',
       icon: 'Maximize',
     },
   ];
@@ -113,7 +113,7 @@ const Index = () => {
       category: 'home',
       title: 'Вазон для растений',
       description: 'Современный горшок с дренажной системой для комнатных растений',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/753e47c5-dbc8-4944-aca9-f2b675dae4a7.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/fd801d9a-0628-4799-b922-5db3097b6c1b.jpg',
       tags: ['Декор', 'Растения'],
     },
     {
@@ -121,7 +121,7 @@ const Index = () => {
       category: 'home',
       title: 'Подставка для телефона',
       description: 'Регулируемая подставка с противоскользящим покрытием',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/ffaf3782-2b60-4a01-9301-f9000f5b7a83.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/183e3930-8f5f-4c23-af6e-94ff7eaa9233.jpg',
       tags: ['Гаджеты', 'Офис'],
     },
     {
@@ -137,7 +137,7 @@ const Index = () => {
       category: 'toys',
       title: 'Фигурки персонажей',
       description: 'Коллекционные модели популярных героев мультфильмов и игр',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/0a2ff51f-e0c2-4442-8cb6-bc32bae53410.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/62819e9d-4dc8-49ad-baea-2d4a5f2b0878.jpg',
       tags: ['Коллекция', 'Хобби'],
     },
     {
@@ -145,7 +145,7 @@ const Index = () => {
       category: 'toys',
       title: 'Головоломки 3D',
       description: 'Механические пазлы различной сложности для всех возрастов',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/0a2ff51f-e0c2-4442-8cb6-bc32bae53410.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/09d9db07-ccdf-4994-8cd6-44e9fcb2977c.jpg',
       tags: ['Логика', 'Семья'],
     },
     {
@@ -161,7 +161,7 @@ const Index = () => {
       category: 'auto',
       title: 'Органайзер в багажник',
       description: 'Складная система хранения для организации пространства',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/2bdb82eb-7827-473f-86e6-6f9274630043.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/21e4943f-a868-4608-a35a-ae5da45e146c.jpg',
       tags: ['Хранение', 'Порядок'],
     },
     {
@@ -169,7 +169,7 @@ const Index = () => {
       category: 'auto',
       title: 'Подставка для стаканов',
       description: 'Держатель напитков с регулируемым диаметром',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/2bdb82eb-7827-473f-86e6-6f9274630043.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/ade5dc48-8635-4ea7-9cf4-96fbebc4f15b.jpg',
       tags: ['Комфорт', 'Аксессуары'],
     },
     {
@@ -177,7 +177,7 @@ const Index = () => {
       category: 'popular',
       title: 'Настольный органайзер',
       description: 'Многофункциональная подставка для канцелярии и мелочей',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/ffaf3782-2b60-4a01-9301-f9000f5b7a83.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/1213666f-8113-486c-910f-241b53077e83.jpg',
       tags: ['Офис', 'Популярное'],
     },
     {
@@ -185,7 +185,7 @@ const Index = () => {
       category: 'popular',
       title: 'Брелок с индивидуальным дизайном',
       description: 'Персонализированные брелоки с именем или логотипом',
-      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/753e47c5-dbc8-4944-aca9-f2b675dae4a7.jpg',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/2b288377-16e3-4333-9683-a8aa9da68549.jpg',
       tags: ['Подарок', 'Персонализация'],
     },
   ];
@@ -556,56 +556,6 @@ const Index = () => {
               )}
             </CardContent>
           </Card>
-        </div>
-      </section>
-
-      <section id="gallery" className="py-20 px-4">
-        <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">Галерея работ</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
-              <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/62819e9d-4dc8-49ad-baea-2d4a5f2b0878.jpg"
-                alt="Пример работы 1"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
-              <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/b8d2e1c5-3b28-4f76-bf4f-c831e4d50baf.jpg"
-                alt="Пример работы 2"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
-              <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/8c868d91-d8cd-491c-89f3-ba3bac85afec.jpg"
-                alt="Пример работы 3"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
-              <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/f32e8c14-08bc-462f-8c91-8e2a3c7b5eed.jpg"
-                alt="Пример работы 4"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
-              <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/b8d2e1c5-3b28-4f76-bf4f-c831e4d50baf.jpg"
-                alt="Пример работы 5"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
-              <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/62819e9d-4dc8-49ad-baea-2d4a5f2b0878.jpg"
-                alt="Пример работы 6"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
         </div>
       </section>
 

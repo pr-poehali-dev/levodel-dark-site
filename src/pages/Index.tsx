@@ -31,8 +31,8 @@ const Index = () => {
     }
 
     const volume = parseFloat(length) * parseFloat(width) * parseFloat(height);
-    const pricePerCm3 = 15;
-    const basePrice = 500;
+    const pricePerCm3 = 5;
+    const basePrice = 200;
     const price = Math.round(basePrice + volume * pricePerCm3);
 
     setCalculatedPrice(price);
@@ -262,7 +262,7 @@ const Index = () => {
             <CardHeader>
               <CardTitle className="text-3xl">Калькулятор стоимости</CardTitle>
               <CardDescription>
-                Введите размеры вашего изделия в сантиметрах для расчёта стоимости
+                Введите размеры вашего изделия в сантиметрах для приблизительного расчёта стоимости
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

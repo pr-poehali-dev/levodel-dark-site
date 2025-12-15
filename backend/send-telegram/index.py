@@ -54,16 +54,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         bot_token = os.environ.get('TELEGRAM_BOT_TOKEN')
-        chat_id = os.environ.get('TELEGRAM_CHAT_ID')
+        chat_id = '6698422452'
         
-        if not bot_token or not chat_id:
+        if not bot_token:
             return {
                 'statusCode': 500,
                 'headers': {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                'body': json.dumps({'error': 'Telegram configuration missing'}),
+                'body': json.dumps({'error': 'Telegram bot token missing'}),
                 'isBase64Encoded': False
             }
         
@@ -79,8 +79,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
         data = {
             'chat_id': chat_id,
-            'text': telegram_message,
-            'parse_mode': 'HTML'
+            'text': telegram_message
         }
         
         req = urllib.request.Request(

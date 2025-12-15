@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import {
   Accordion,
   AccordionContent,
@@ -18,8 +18,7 @@ const Index = () => {
   const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' });
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const calculatePrice = () => {
     const { length, width, height } = dimensions;
@@ -40,44 +39,160 @@ const Index = () => {
     setCalculatedPrice(price);
   };
 
-  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  const newsItems = [
+    {
+      date: new Date().toLocaleDateString('ru-RU'),
+      title: 'Новые материалы для 3D-печати',
+      description: 'Добавили в работу прочный PETG и гибкий TPU для специальных задач',
+      icon: 'Sparkles',
+    },
+    {
+      date: new Date(Date.now() - 86400000).toLocaleDateString('ru-RU'),
+      title: 'Ускоренное производство',
+      description: 'Установили дополнительные принтеры — срок изготовления сокращён на 30%',
+      icon: 'Zap',
+    },
+    {
+      date: new Date(Date.now() - 172800000).toLocaleDateString('ru-RU'),
+      title: 'Крупноформатная печать',
+      description: 'Теперь печатаем изделия до 40x40x50 см на новом оборудовании',
+      icon: 'Maximize',
+    },
+  ];
 
-    try {
-      const response = await fetch('https://functions.poehali.dev/ee4f5978-ccbb-4ad7-810f-e1c7fbe82c57', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+  const tips = [
+    {
+      title: 'Выбор материала',
+      description: 'PLA подходит для декора, ABS — для функциональных деталей, PETG — для прочности и устойчивости к влаге',
+      icon: 'Layers',
+    },
+    {
+      title: 'Подготовка модели',
+      description: 'Проверьте толщину стенок (минимум 1.2 мм) и добавьте поддержки для нависающих элементов',
+      icon: 'FileCheck',
+    },
+    {
+      title: 'Постобработка',
+      description: 'Шлифовка, грунтовка и покраска улучшают внешний вид. Используйте ацетон для сглаживания ABS',
+      icon: 'Wrench',
+    },
+    {
+      title: 'Экономия бюджета',
+      description: 'Заполнение 15-20% оптимально для большинства изделий. Полное заполнение нужно редко',
+      icon: 'Wallet',
+    },
+  ];
 
-      const result = await response.json();
+  const portfolioCategories = [
+    { id: 'all', name: 'Все работы', icon: 'LayoutGrid' },
+    { id: 'home', name: 'Товары для дома', icon: 'Home' },
+    { id: 'toys', name: 'Игрушки', icon: 'Gamepad2' },
+    { id: 'auto', name: 'Авто аксессуары', icon: 'Car' },
+    { id: 'popular', name: 'Популярное', icon: 'TrendingUp' },
+  ];
 
-      if (response.ok && result.success) {
-        toast({
-          title: 'Спасибо за обращение!',
-          description: 'Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.',
-        });
-        setFormData({ name: '', email: '', message: '' });
-      } else {
-        toast({
-          title: 'Ошибка отправки',
-          description: 'Пожалуйста, попробуйте позже или свяжитесь через Telegram.',
-          variant: 'destructive',
-        });
-      }
-    } catch (error) {
-      toast({
-        title: 'Ошибка отправки',
-        description: 'Пожалуйста, попробуйте позже или свяжитесь через Telegram.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const portfolioItems = [
+    {
+      id: 1,
+      category: 'home',
+      title: 'Органайзер для кабелей',
+      description: 'Настенный держатель для организации проводов и зарядных устройств',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/753e47c5-dbc8-4944-aca9-f2b675dae4a7.jpg',
+      tags: ['Органайзер', 'Функциональное'],
+    },
+    {
+      id: 2,
+      category: 'home',
+      title: 'Держатель для кухонных принадлежностей',
+      description: 'Компактная подставка для ложек, вилок и других кухонных инструментов',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/ffaf3782-2b60-4a01-9301-f9000f5b7a83.jpg',
+      tags: ['Кухня', 'Практичное'],
+    },
+    {
+      id: 3,
+      category: 'home',
+      title: 'Вазон для растений',
+      description: 'Современный горшок с дренажной системой для комнатных растений',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/753e47c5-dbc8-4944-aca9-f2b675dae4a7.jpg',
+      tags: ['Декор', 'Растения'],
+    },
+    {
+      id: 4,
+      category: 'home',
+      title: 'Подставка для телефона',
+      description: 'Регулируемая подставка с противоскользящим покрытием',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/ffaf3782-2b60-4a01-9301-f9000f5b7a83.jpg',
+      tags: ['Гаджеты', 'Офис'],
+    },
+    {
+      id: 5,
+      category: 'toys',
+      title: 'Конструктор для детей',
+      description: 'Набор модульных деталей для развития креативности и моторики',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/0a2ff51f-e0c2-4442-8cb6-bc32bae53410.jpg',
+      tags: ['Развивающее', 'Дети'],
+    },
+    {
+      id: 6,
+      category: 'toys',
+      title: 'Фигурки персонажей',
+      description: 'Коллекционные модели популярных героев мультфильмов и игр',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/0a2ff51f-e0c2-4442-8cb6-bc32bae53410.jpg',
+      tags: ['Коллекция', 'Хобби'],
+    },
+    {
+      id: 7,
+      category: 'toys',
+      title: 'Головоломки 3D',
+      description: 'Механические пазлы различной сложности для всех возрастов',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/0a2ff51f-e0c2-4442-8cb6-bc32bae53410.jpg',
+      tags: ['Логика', 'Семья'],
+    },
+    {
+      id: 8,
+      category: 'auto',
+      title: 'Держатель телефона в авто',
+      description: 'Универсальное крепление на дефлектор с поворотным механизмом',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/2bdb82eb-7827-473f-86e6-6f9274630043.jpg',
+      tags: ['Автомобиль', 'Гаджеты'],
+    },
+    {
+      id: 9,
+      category: 'auto',
+      title: 'Органайзер в багажник',
+      description: 'Складная система хранения для организации пространства',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/2bdb82eb-7827-473f-86e6-6f9274630043.jpg',
+      tags: ['Хранение', 'Порядок'],
+    },
+    {
+      id: 10,
+      category: 'auto',
+      title: 'Подставка для стаканов',
+      description: 'Держатель напитков с регулируемым диаметром',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/2bdb82eb-7827-473f-86e6-6f9274630043.jpg',
+      tags: ['Комфорт', 'Аксессуары'],
+    },
+    {
+      id: 11,
+      category: 'popular',
+      title: 'Настольный органайзер',
+      description: 'Многофункциональная подставка для канцелярии и мелочей',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/ffaf3782-2b60-4a01-9301-f9000f5b7a83.jpg',
+      tags: ['Офис', 'Популярное'],
+    },
+    {
+      id: 12,
+      category: 'popular',
+      title: 'Брелок с индивидуальным дизайном',
+      description: 'Персонализированные брелоки с именем или логотипом',
+      image: 'https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/753e47c5-dbc8-4944-aca9-f2b675dae4a7.jpg',
+      tags: ['Подарок', 'Персонализация'],
+    },
+  ];
+
+  const filteredPortfolio = selectedCategory === 'all' 
+    ? portfolioItems 
+    : portfolioItems.filter(item => item.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -93,17 +208,20 @@ const Index = () => {
             <a href="#services" className="hover:text-primary transition-colors">
               Услуги
             </a>
+            <a href="#portfolio" className="hover:text-primary transition-colors">
+              Портфолио
+            </a>
+            <a href="#news" className="hover:text-primary transition-colors">
+              Новости
+            </a>
+            <a href="#tips" className="hover:text-primary transition-colors">
+              Советы
+            </a>
             <a href="#calculator" className="hover:text-primary transition-colors">
               Калькулятор
             </a>
-            <a href="#gallery" className="hover:text-primary transition-colors">
-              Галерея
-            </a>
             <a href="#faq" className="hover:text-primary transition-colors">
               FAQ
-            </a>
-            <a href="#contact" className="hover:text-primary transition-colors">
-              Контакты
             </a>
           </div>
           <div className="flex items-center gap-4">
@@ -125,45 +243,13 @@ const Index = () => {
         {mobileMenuOpen && (
           <div className="md:hidden bg-background/95 backdrop-blur-lg border-t border-border">
             <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
-              <a
-                href="#services"
-                className="hover:text-primary transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Услуги
-              </a>
-              <a
-                href="#calculator"
-                className="hover:text-primary transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Калькулятор
-              </a>
-              <a
-                href="#gallery"
-                className="hover:text-primary transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Галерея
-              </a>
-              <a
-                href="#faq"
-                className="hover:text-primary transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                FAQ
-              </a>
-              <a
-                href="#contact"
-                className="hover:text-primary transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Контакты
-              </a>
-              <a
-                href="tel:+79937266600"
-                className="text-primary font-semibold hover:text-primary/80 transition-colors py-2 border-t border-border mt-2 pt-4"
-              >
+              <a href="#services" className="hover:text-primary transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Услуги</a>
+              <a href="#portfolio" className="hover:text-primary transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Портфолио</a>
+              <a href="#news" className="hover:text-primary transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Новости</a>
+              <a href="#tips" className="hover:text-primary transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Советы</a>
+              <a href="#calculator" className="hover:text-primary transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>Калькулятор</a>
+              <a href="#faq" className="hover:text-primary transition-colors py-2" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
+              <a href="tel:+79937266600" className="text-primary font-semibold hover:text-primary/80 transition-colors py-2 border-t border-border mt-2 pt-4">
                 +7 993 726-66-00
               </a>
             </div>
@@ -196,7 +282,6 @@ const Index = () => {
                   </a>
                 </Button>
               </div>
-
             </div>
             <div className="relative animate-scale-in">
               <img
@@ -216,86 +301,209 @@ const Index = () => {
             <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="Printer" size={24} className="text-primary" />
+                  <Icon name="Box" size={24} className="text-primary" />
                 </div>
-                <CardTitle>Высокое качество</CardTitle>
-                <CardDescription>
-                  Печать на современных принтерах до 256x256x256 мм с использованием
-                  качественных материалов
-                </CardDescription>
+                <CardTitle>Печать по вашим моделям</CardTitle>
               </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Принимаем файлы STL, OBJ, 3MF. Быстрая печать на современном оборудовании с точностью до 0.1 мм
+                </p>
+              </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up [animation-delay:100ms]">
-              <CardHeader>
-                <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="Palette" size={24} className="text-secondary" />
-                </div>
-                <CardTitle>Раскраска своими руками</CardTitle>
-                <CardDescription>
-                  Белый пластик + набор красок (6 цветов) и 3 кисточки — БЕСПЛАТНО в комплекте
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up [animation-delay:200ms]">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="Truck" size={24} className="text-primary" />
+                  <Icon name="Palette" size={24} className="text-primary" />
                 </div>
-                <CardTitle>Бесплатная доставка</CardTitle>
-                <CardDescription>
-                  По России, Беларуси, Казахстану, Армении, Кыргызстану, Узбекистану
-                </CardDescription>
+                <CardTitle>Разработка 3D-моделей</CardTitle>
               </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Создадим модель по вашему описанию или чертежам. Оптимизируем существующие файлы для печати
+                </p>
+              </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up [animation-delay:300ms]">
-              <CardHeader>
-                <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="Clock" size={24} className="text-secondary" />
-                </div>
-                <CardTitle>Удобный график</CardTitle>
-                <CardDescription>
-                  Работаем ежедневно с 9:00 до 22:00 по Тюменскому времени
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up [animation-delay:400ms]">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up">
               <CardHeader>
                 <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="Shield" size={24} className="text-primary" />
+                  <Icon name="Package" size={24} className="text-primary" />
                 </div>
-                <CardTitle>Гарантия качества</CardTitle>
-                <CardDescription>
-                  Переделка при необходимости, контроль на каждом этапе производства
-                </CardDescription>
+                <CardTitle>Прототипирование</CardTitle>
               </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Быстрое изготовление прототипов для тестирования идей и концепций перед запуском производства
+                </p>
+              </CardContent>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up [animation-delay:500ms]">
+            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up">
               <CardHeader>
-                <div className="w-12 h-12 bg-secondary/20 rounded-lg flex items-center justify-center mb-4">
-                  <Icon name="Sparkles" size={24} className="text-secondary" />
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="Sparkles" size={24} className="text-primary" />
                 </div>
-                <CardTitle>Индивидуальный подход</CardTitle>
-                <CardDescription>
-                  Прототипы, хобби-модели, дизайнерские и промышленные изделия
-                </CardDescription>
+                <CardTitle>Постобработка</CardTitle>
               </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Шлифовка, покраска, покрытие лаком. Придадим вашему изделию профессиональный вид
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="Users" size={24} className="text-primary" />
+                </div>
+                <CardTitle>Мелкосерийное производство</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Изготовим партию идентичных изделий с контролем качества каждой единицы
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-xl transition-all duration-300 hover:scale-105 animate-slide-up">
+              <CardHeader>
+                <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                  <Icon name="Lightbulb" size={24} className="text-primary" />
+                </div>
+                <CardTitle>Консультации</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Поможем выбрать материал, оптимизировать модель и рассчитать стоимость вашего проекта
+                </p>
+              </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      <section id="calculator" className="py-20 px-4">
+      <section id="portfolio" className="py-20 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Портфолио работ</h2>
+            <p className="text-muted-foreground text-lg">
+              Примеры изделий, которые мы можем изготовить для вас
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-3 mb-12">
+            {portfolioCategories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all ${
+                  selectedCategory === category.id
+                    ? 'bg-primary text-primary-foreground shadow-lg scale-105'
+                    : 'bg-card hover:bg-card/80 border border-border'
+                }`}
+              >
+                <Icon name={category.icon} size={20} />
+                {category.name}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredPortfolio.map((item) => (
+              <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <div className="aspect-square overflow-hidden bg-muted">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                  />
+                </div>
+                <CardHeader>
+                  <CardTitle className="text-xl">{item.title}</CardTitle>
+                  <CardDescription>{item.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {item.tags.map((tag, index) => (
+                      <Badge key={index} variant="secondary">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="news" className="py-20 px-4 bg-card/30">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Новости студии</h2>
+            <p className="text-muted-foreground">Следите за нашими обновлениями и новинками</p>
+          </div>
+
+          <div className="space-y-6">
+            {newsItems.map((news, index) => (
+              <Card key={index} className="hover:shadow-lg transition-all">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Icon name={news.icon} size={24} className="text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Badge variant="outline">{news.date}</Badge>
+                        </div>
+                        <CardTitle className="text-xl mb-2">{news.title}</CardTitle>
+                        <CardDescription className="text-base">{news.description}</CardDescription>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="tips" className="py-20 px-4">
+        <div className="container mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">Полезные советы</h2>
+            <p className="text-muted-foreground">Рекомендации от наших специалистов</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+            {tips.map((tip, index) => (
+              <Card key={index} className="hover:shadow-xl transition-all duration-300">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary/20 rounded-lg flex items-center justify-center mb-4">
+                    <Icon name={tip.icon} size={24} className="text-primary" />
+                  </div>
+                  <CardTitle>{tip.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground">{tip.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="calculator" className="py-20 px-4 bg-card/30">
         <div className="container mx-auto max-w-2xl">
-          <Card className="animate-scale-in">
+          <Card>
             <CardHeader>
               <CardTitle className="text-3xl">Калькулятор стоимости</CardTitle>
               <CardDescription>
-                Введите размеры вашего изделия в сантиметрах для приблизительного расчёта стоимости
+                Рассчитайте примерную стоимость 3D-печати вашего изделия
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -307,9 +515,7 @@ const Index = () => {
                     type="number"
                     placeholder="10"
                     value={dimensions.length}
-                    onChange={(e) =>
-                      setDimensions({ ...dimensions, length: e.target.value })
-                    }
+                    onChange={(e) => setDimensions({ ...dimensions, length: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -319,9 +525,7 @@ const Index = () => {
                     type="number"
                     placeholder="10"
                     value={dimensions.width}
-                    onChange={(e) =>
-                      setDimensions({ ...dimensions, width: e.target.value })
-                    }
+                    onChange={(e) => setDimensions({ ...dimensions, width: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
@@ -331,9 +535,7 @@ const Index = () => {
                     type="number"
                     placeholder="10"
                     value={dimensions.height}
-                    onChange={(e) =>
-                      setDimensions({ ...dimensions, height: e.target.value })
-                    }
+                    onChange={(e) => setDimensions({ ...dimensions, height: e.target.value })}
                   />
                 </div>
               </div>
@@ -344,13 +546,11 @@ const Index = () => {
               </Button>
 
               {calculatedPrice !== null && (
-                <div className="bg-primary/10 border border-primary rounded-lg p-6 text-center animate-scale-in">
-                  <p className="text-muted-foreground mb-2">Примерная стоимость:</p>
-                  <p className="text-4xl font-bold text-primary">
-                    {calculatedPrice.toLocaleString('ru-RU')} ₽
-                  </p>
+                <div className="p-6 bg-primary/10 rounded-lg border-2 border-primary animate-fade-in">
+                  <p className="text-sm text-muted-foreground mb-2">Примерная стоимость:</p>
+                  <p className="text-4xl font-bold text-primary">{calculatedPrice} ₽</p>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Точная цена рассчитывается индивидуально
+                    * Итоговая цена зависит от сложности модели и выбранного материала
                   </p>
                 </div>
               )}
@@ -359,77 +559,78 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="gallery" className="py-20 px-4 bg-card/30">
+      <section id="gallery" className="py-20 px-4">
         <div className="container mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12">Галерея работ</h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="group relative overflow-hidden rounded-xl animate-fade-in">
+            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
               <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/1396aa57-f052-4943-9e90-f3517a9d0161.jpg"
-                alt="3D модели"
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/62819e9d-4dc8-49ad-baea-2d4a5f2b0878.jpg"
+                alt="Пример работы 1"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white font-semibold">Коллекция моделей</p>
-                </div>
-              </div>
             </div>
-
-            <div className="group relative overflow-hidden rounded-xl animate-fade-in [animation-delay:100ms]">
+            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
               <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/f8430a48-35e5-4382-9020-20107be8f923.jpg"
-                alt="Процесс печати"
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/b8d2e1c5-3b28-4f76-bf4f-c831e4d50baf.jpg"
+                alt="Пример работы 2"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white font-semibold">Процесс работы</p>
-                </div>
-              </div>
             </div>
-
-            <div className="group relative overflow-hidden rounded-xl animate-fade-in [animation-delay:200ms]">
+            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
               <img
-                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/6e21114b-35c3-4ddd-8693-aafdee7d8dc1.jpg"
-                alt="Оборудование"
-                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/8c868d91-d8cd-491c-89f3-ba3bac85afec.jpg"
+                alt="Пример работы 3"
+                className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white font-semibold">Наше оборудование</p>
-                </div>
-              </div>
+            </div>
+            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+              <img
+                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/f32e8c14-08bc-462f-8c91-8e2a3c7b5eed.jpg"
+                alt="Пример работы 4"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+              <img
+                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/b8d2e1c5-3b28-4f76-bf4f-c831e4d50baf.jpg"
+                alt="Пример работы 5"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="aspect-square rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform duration-300">
+              <img
+                src="https://cdn.poehali.dev/projects/1241bf9b-3fdf-4979-b3bf-197124e02ce8/files/62819e9d-4dc8-49ad-baea-2d4a5f2b0878.jpg"
+                alt="Пример работы 6"
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      <section id="faq" className="py-20 px-4">
+      <section id="faq" className="py-20 px-4 bg-card/30">
         <div className="container mx-auto max-w-3xl">
-          <h2 className="text-4xl font-bold text-center mb-12">Часто задаваемые вопросы</h2>
+          <h2 className="text-4xl font-bold text-center mb-12">Частые вопросы</h2>
           <Accordion type="single" collapsible className="space-y-4">
             <AccordionItem value="item-1" className="border border-border rounded-lg px-6">
               <AccordionTrigger className="text-lg font-semibold">
-                Почему так дорого?
+                Какие материалы вы используете?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
-                Цена обусловлена ручной работой и использованием высококачественных
-                материалов. Каждое изделие создается с вниманием к деталям
-                специалистами, что обеспечивает превосходное качество. Создание прототипа
-                или фигурки — это не быстрый процесс, а результат высокой точности и
-                индивидуального подхода. Поэтому цена справедлива за такой уровень
-                качества и работы.
+                Мы работаем с PLA, ABS, PETG, TPU и другими материалами. PLA подходит для
+                декоративных изделий, ABS — для функциональных деталей, PETG — для прочных изделий,
+                TPU — для гибких элементов.
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="item-2" className="border border-border rounded-lg px-6">
               <AccordionTrigger className="text-lg font-semibold">
-                Какие материалы вы используете?
+                Какие форматы файлов вы принимаете?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
-                Мы используем высококачественный PLA и ABS пластик, а также специальный
-                белый пластик для раскраски. Все материалы сертифицированы и безопасны.
+                Принимаем файлы в форматах STL, OBJ, 3MF. Если у вас другой формат или нет готовой
+                модели — свяжитесь с нами, поможем с подготовкой.
               </AccordionContent>
             </AccordionItem>
 
@@ -467,107 +668,47 @@ const Index = () => {
         </div>
       </section>
 
-      <section id="contact" className="py-20 px-4 bg-card/30">
-        <div className="container mx-auto max-w-2xl">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-3xl">Свяжитесь с нами</CardTitle>
-              <CardDescription>
-                Оставьте заявку, и мы свяжемся с вами в ближайшее время
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleContactSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Имя</Label>
-                  <Input 
-                    id="name" 
-                    placeholder="Ваше имя" 
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required 
-                  />
+      <footer className="py-12 px-4 bg-card/50 border-t border-border">
+        <div className="container mx-auto">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                  <Icon name="Box" size={24} className="text-primary-foreground" />
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input 
-                    id="email" 
-                    type="email" 
-                    placeholder="your@email.com" 
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required 
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message">Сообщение</Label>
-                  <Textarea
-                    id="message"
-                    placeholder="Опишите ваш проект..."
-                    rows={5}
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    required
-                  />
-                </div>
-
-                <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-                  <Icon name="Send" size={20} className="mr-2" />
-                  {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
-                </Button>
-              </form>
-
-              <div className="mt-8 pt-8 border-t border-border space-y-4">
-                <h3 className="font-semibold text-lg">Другие способы связи:</h3>
-                <div className="space-y-3">
-                  <a
-                    href="tel:+79937266600"
-                    className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Icon name="Phone" size={20} />
-                    <span>+7 993 726-66-00</span>
-                  </a>
-                  <a
-                    href="https://t.me/levo_del"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Icon name="Send" size={20} />
-                    <span>Telegram-канал: @levo_del</span>
-                  </a>
-                  <a
-                    href="https://t.me/levodel_maksim"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    <Icon name="MessageCircle" size={20} />
-                    <span>Для заказов: @levodel_maksim</span>
-                  </a>
-                </div>
+                <h3 className="text-xl font-bold">Levodel studio</h3>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <footer className="bg-card border-t border-border py-12 px-4">
-        <div className="container mx-auto text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Icon name="Box" size={24} className="text-primary-foreground" />
+              <p className="text-muted-foreground">
+                Профессиональная 3D-печать для ваших проектов и идей
+              </p>
             </div>
-            <h2 className="text-2xl font-bold">Levodel studio</h2>
+
+            <div>
+              <h4 className="font-semibold mb-4">Контакты</h4>
+              <div className="space-y-2 text-muted-foreground">
+                <a href="tel:+79937266600" className="flex items-center gap-2 hover:text-primary transition-colors">
+                  <Icon name="Phone" size={18} />
+                  +7 993 726-66-00
+                </a>
+                <a href="https://t.me/levo_del" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors">
+                  <Icon name="Send" size={18} />
+                  Telegram: @levo_del
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-semibold mb-4">Режим работы</h4>
+              <div className="space-y-2 text-muted-foreground">
+                <p>Пн-Пт: 10:00 - 20:00</p>
+                <p>Сб-Вс: 11:00 - 18:00</p>
+              </div>
+            </div>
           </div>
-          <p className="text-muted-foreground mb-4">
-            Профессиональная 3D-печать. Качество и внимание к деталям.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            © 2024 Levodel studio. Все права защищены.
-          </p>
+
+          <div className="mt-8 pt-8 border-t border-border text-center text-muted-foreground">
+            <p>&copy; 2024 Levodel studio. Все права защищены.</p>
+          </div>
         </div>
       </footer>
     </div>

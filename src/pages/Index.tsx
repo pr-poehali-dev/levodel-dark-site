@@ -18,6 +18,8 @@ const Index = () => {
   const [dimensions, setDimensions] = useState({ length: '', width: '', height: '' });
   const [calculatedPrice, setCalculatedPrice] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const calculatePrice = () => {
     const { length, width, height } = dimensions;
@@ -38,12 +40,43 @@ const Index = () => {
     setCalculatedPrice(price);
   };
 
-  const handleContactSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast({
-      title: 'Спасибо за обращение!',
-      description: 'Мы свяжемся с вами в ближайшее время.',
-    });
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('https://functions.poehali.dev/ee4f5978-ccbb-4ad7-810f-e1c7fbe82c57', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast({
+          title: 'Спасибо за обращение!',
+          description: 'Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.',
+        });
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        toast({
+          title: 'Ошибка отправки',
+          description: 'Пожалуйста, попробуйте позже или свяжитесь через Telegram.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка отправки',
+        description: 'Пожалуйста, попробуйте позже или свяжитесь через Telegram.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -447,12 +480,25 @@ const Index = () => {
               <form onSubmit={handleContactSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="name">Имя</Label>
-                  <Input id="name" placeholder="Ваше имя" required />
+                  <Input 
+                    id="name" 
+                    placeholder="Ваше имя" 
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required 
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="your@email.com" required />
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    placeholder="your@email.com" 
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    required 
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -461,13 +507,15 @@ const Index = () => {
                     id="message"
                     placeholder="Опишите ваш проект..."
                     rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     required
                   />
                 </div>
 
-                <Button type="submit" className="w-full" size="lg">
+                <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
                   <Icon name="Send" size={20} className="mr-2" />
-                  Отправить заявку
+                  {isSubmitting ? 'Отправка...' : 'Отправить заявку'}
                 </Button>
               </form>
 
